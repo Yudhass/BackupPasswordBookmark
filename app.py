@@ -2418,6 +2418,55 @@ def default_output_dir() -> Path:
     return app_home_dir() / "hasil-backup"
 
 
+def resolve_web_output(raw) -> Path:
+    """Ubah isian 'output' dari web menjadi folder tujuan.
+
+    - Path absolut (mis. ``D:\\Backup\\Arsip``) -> dipakai langsung.
+    - Nama / path relatif (mis. ``hasil-backup``) -> di samping aplikasi
+      (perilaku lama, tetap kompatibel). Tiap bagian nama dibersihkan
+      via safe_name dan ``..`` dibuang agar tak bisa traversal keluar.
+    Server hanya listen di 127.0.0.1 sehingga ini setara dengan CLI
+    ``--output`` / tombol Pilih di GUI desktop.
+    """
+    s = str(raw or "").strip() or "hasil-backup"
+    s = os.path.expandvars(os.path.expanduser(s))
+    p = Path(s)
+    if p.is_absolute():
+        return p
+    parts = []
+    for part in p.parts:
+        if part in (".", "..", "/", "\\", ""):
+            continue
+        clean = safe_name(part)
+        if clean and clean != "profile":
+            parts.append(clean)
+        elif clean:
+            parts.append(clean)
+    if not parts:
+        parts = ["hasil-backup"]
+    return app_home_dir().joinpath(*parts)
+
+
+def folder_suggestions() -> list:
+    """Lokasi cepat untuk pemilih folder di web (dir + default)."""
+    home = app_home_dir()
+    default = default_output_dir()
+    out = [{"label": "Samping aplikasi", "path": str(default)}]
+    profile = os.environ.get("USERPROFILE", "")
+    for label, sub in (("Desktop", "Desktop"), ("Dokumen", "Documents"),
+                       ("Unduhan", "Downloads")):
+        if profile:
+            out.append({"label": label, "path": str(Path(profile) / sub / "hasil-backup")})
+    # Nama relatif lama tetap didukung -> sediakan juga bentuk pendeknya.
+    out.append({"label": "Nama pendek", "path": "hasil-backup"})
+    seen, uniq = set(), []
+    for s in out:
+        if s["path"] not in seen:
+            seen.add(s["path"])
+            uniq.append(s)
+    return uniq
+
+
 # ================================================================= Web UI (localhost saja)
 
 def run_web(_args=None):
@@ -2457,7 +2506,13 @@ def run_web(_args=None):
                     "admin": is_admin(),
                     "browsers": [{"id": bid, "label": info["label"],
                                   "kind": info["kind"], "profiles": info["profiles"]}
-                                 for bid, info in found.items()]})
+                                  for bid, info in found.items()]})
+                return
+            if path == "/api/folders":
+                self._json({
+                    "home": str(app_home_dir()),
+                    "default": str(default_output_dir()),
+                    "suggestions": folder_suggestions()})
                 return
             rel = "index.html" if path in ("/", "") else path.lstrip("/").replace("/", os.sep)
             target = (web_root / rel).resolve()
@@ -2481,8 +2536,12 @@ def run_web(_args=None):
                 self._json({"error": "Data tidak valid (bukan JSON)."}, 400)
                 return
             show = bool(body.get("show"))
-            out = app_home_dir() / safe_name(body.get("output") or "hasil-backup")
-            out.mkdir(parents=True, exist_ok=True)
+            out = resolve_web_output(body.get("output"))
+            try:
+                out.mkdir(parents=True, exist_ok=True)
+            except Exception as e:
+                self._json({"error": f"Folder output tak bisa dibuat: {out} ({e})"}, 400)
+                return
             sels = body.get("selections") or []
             if not sels:
                 self._json({"error": "Pilih minimal satu browser dan profil dahulu."}, 400)

@@ -10,54 +10,88 @@
 <header class="band">
   <div class="wrap band-in">
     <div class="brand">
-      <svg class="key" viewBox="0 0 32 32" width="40" height="40" aria-hidden="true">
-        <circle cx="11" cy="11" r="7" fill="none" stroke="#C9972B" stroke-width="3"/>
-        <path d="M16 16 L28 28 M23 23 l3 -3 M20 20 l2.5 -2.5" stroke="#C9972B" stroke-width="3" stroke-linecap="round" fill="none"/>
-      </svg>
-      <div>
+      <span class="medal" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26">
+          <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/>
+          <path d="M16 16 L27 27 M22.5 22.5 l3.2 -3.2 M19.5 19.5 l2.4 -2.4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        </svg>
+      </span>
+      <div class="brand-text">
         <h1>Arsip</h1>
-        <p>Backup password &amp; bookmark browser, di komputer ini saja.</p>
+        <p>Kunci milikmu, tersimpan di komputer ini saja. Pilih laci sumber, tekan backup, periksa hasilnya.</p>
       </div>
     </div>
-    <p id="adminBadge" class="badge">Memeriksa hak akses…</p>
+    <div class="lamp" role="status" aria-live="polite">
+      <span class="dot" id="adminDot" aria-hidden="true"></span>
+      <p id="adminBadge">Memeriksa hak akses…</p>
+    </div>
   </div>
 </header>
 
-<main class="wrap grid">
-  <section class="panel sources" aria-label="Sumber backup">
-    <h2>Sumber</h2>
-    <p class="hint">Centang browser dan profil yang mau dibackup.</p>
-    <div class="toolbar">
-      <button type="button" id="allBtn" class="ghost">Pilih semua</button>
-      <button type="button" id="noneBtn" class="ghost">Kosongkan</button>
-      <button type="button" id="refreshBtn" class="ghost">Muat ulang</button>
+<main class="wrap layout">
+  <aside class="drawer" aria-label="Sumber backup">
+    <div class="drawer-head">
+      <h2>Pilih sumber</h2>
+      <p class="hint">Centang browser dan profil yang mau dibackup. Semua dibaca lokal, tidak dikirim ke mana pun.</p>
+      <input type="search" id="srcSearch" placeholder="Cari browser atau profil…" aria-label="Cari browser atau profil">
+      <div class="toolbar">
+        <button type="button" id="allBtn" class="tool">Pilih semua</button>
+        <button type="button" id="noneBtn" class="tool">Kosongkan</button>
+        <button type="button" id="refreshBtn" class="tool">Muat ulang</button>
+      </div>
     </div>
     <div id="browserList"><p class="hint">Memuat daftar browser…</p></div>
-    <label class="check">
-      <input type="checkbox" id="showPw">
-      Tampilkan password asli di tabel hasil
-    </label>
-  </section>
+    <div class="drawer-foot">
+      <p class="sel-line"><strong id="selCount">0</strong> profil dipilih</p>
+      <label class="out-row" for="outDir">
+        Simpan ke folder
+        <span class="out-wrap">
+          <input type="text" id="outDir" value="hasil-backup" autocomplete="off" spellcheck="false" list="outSuggest" aria-describedby="outHint">
+          <button type="button" id="resetOut" class="tool" title="Kembalikan ke hasil-backup">Reset</button>
+        </span>
+        <datalist id="outSuggest"></datalist>
+        <div class="out-quick" id="outQuick" aria-label="Lokasi cepat"></div>
+        <small id="outHint">Bisa nama folder (disimpan di samping aplikasi) atau path lengkap, mis. D:\Backup\Arsip. Browser tak bisa membuka dialog folder, jadi ketik atau tempel path-nya.</small>
+      </label>
+      <label class="check show-row">
+        <input type="checkbox" id="showPw">
+        <span>Tampilkan password asli di tabel hasil <small>mati = password disensor</small></span>
+      </label>
+    </div>
+  </aside>
 
-  <section class="panel results" aria-label="Hasil backup">
-    <h2>Hasil</h2>
-    <p id="emptyNote" class="hint">Belum ada hasil. Pilih sumber di samping, lalu tekan Backup sekarang.</p>
-    <div id="resultMeta"></div>
+  <section class="desk" aria-label="Hasil backup">
+    <div class="desk-head">
+      <h2>Hasil backup</h2>
+      <p id="emptyNote" class="hint">Belum ada hasil. Pilih sumber di laci kiri, lalu tekan Backup sekarang di bawah.</p>
+      <div class="stats" id="statsStrip" hidden>
+        <div class="stat"><span class="num" id="statProf">0</span><span class="cap">profil dibackup</span></div>
+        <div class="stat"><span class="num" id="statP">0</span><span class="cap">password</span></div>
+        <div class="stat"><span class="num" id="statB">0</span><span class="cap">bookmark</span></div>
+      </div>
+      <div id="resultMeta"></div>
+      <div class="desk-tools" id="deskTools" hidden>
+        <input type="search" id="q" placeholder="Saring hasil (url, username)…" aria-label="Saring hasil">
+        <span class="rowcount" id="rowCount"></span>
+        <button type="button" id="copyBtn" class="tool">Salin yang tampil</button>
+      </div>
+    </div>
     <div class="tablewrap">
       <table id="resultTable" hidden>
         <thead>
-          <tr><th>Browser</th><th>Profil</th><th>URL</th><th>Username</th><th>Password</th></tr>
+          <tr><th scope="col">Browser</th><th scope="col">Profil</th><th scope="col">URL</th><th scope="col">Username</th><th scope="col">Password</th></tr>
         </thead>
         <tbody id="resultBody"></tbody>
       </table>
     </div>
+    <p class="desk-note">File tersimpan di <code id="outPathNote">hasil-backup</code> <button type="button" id="copyPathBtn" class="tool mini">Salin path</button> Buka path itu di Explorer setelah selesai, lalu pindahkan ke media terenkripsi.</p>
   </section>
 </main>
 
 <div class="actionbar">
   <div class="wrap action-in">
     <p id="status" aria-live="polite">Siap.</p>
-    <button type="button" id="backupBtn">Backup sekarang</button>
+    <button type="button" id="backupBtn"><span class="btn-key" aria-hidden="true">◉</span> Backup sekarang</button>
   </div>
 </div>
 

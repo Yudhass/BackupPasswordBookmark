@@ -103,7 +103,7 @@ python app.py --diagnosa                        REM cek kenapa v20 terkunci (mod
 
 ## 📦 Hasil Backup
 
-Lokasi default: `hasil-backup/` **di samping aplikasi/EXE** (bukan folder terminal). Dibuat otomatis. Ubah via `--output`.
+Lokasi default: `hasil-backup/` **di samping aplikasi/EXE** (bukan folder terminal). Dibuat otomatis. Ubah via `--output` (CLI), kolom **Simpan ke folder** di web (bisa nama folder atau path lengkap seperti `D:\Backup\Arsip`, plus tombol lokasi cepat Desktop/Dokumen/Unduhan), atau tombol **Pilih…** di GUI desktop.
 
 ```text
 hasil-backup/
