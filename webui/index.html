@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arsip — backup password &amp; bookmark browser</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="band">
+  <div class="wrap band-in">
+    <div class="brand">
+      <svg class="key" viewBox="0 0 32 32" width="40" height="40" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" fill="none" stroke="#C9972B" stroke-width="3"/>
+        <path d="M16 16 L28 28 M23 23 l3 -3 M20 20 l2.5 -2.5" stroke="#C9972B" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div>
+        <h1>Arsip</h1>
+        <p>Backup password &amp; bookmark browser, di komputer ini saja.</p>
+      </div>
+    </div>
+    <p id="adminBadge" class="badge">Memeriksa hak akses…</p>
+  </div>
+</header>
+
+<main class="wrap grid">
+  <section class="panel sources" aria-label="Sumber backup">
+    <h2>Sumber</h2>
+    <p class="hint">Centang browser dan profil yang mau dibackup.</p>
+    <div class="toolbar">
+      <button type="button" id="allBtn" class="ghost">Pilih semua</button>
+      <button type="button" id="noneBtn" class="ghost">Kosongkan</button>
+      <button type="button" id="refreshBtn" class="ghost">Muat ulang</button>
+    </div>
+    <div id="browserList"><p class="hint">Memuat daftar browser…</p></div>
+    <label class="check">
+      <input type="checkbox" id="showPw">
+      Tampilkan password asli di tabel hasil
+    </label>
+  </section>
+
+  <section class="panel results" aria-label="Hasil backup">
+    <h2>Hasil</h2>
+    <p id="emptyNote" class="hint">Belum ada hasil. Pilih sumber di samping, lalu tekan Backup sekarang.</p>
+    <div id="resultMeta"></div>
+    <div class="tablewrap">
+      <table id="resultTable" hidden>
+        <thead>
+          <tr><th>Browser</th><th>Profil</th><th>URL</th><th>Username</th><th>Password</th></tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div class="actionbar">
+  <div class="wrap action-in">
+    <p id="status" aria-live="polite">Siap.</p>
+    <button type="button" id="backupBtn">Backup sekarang</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

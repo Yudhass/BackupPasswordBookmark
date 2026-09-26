@@ -1,0 +1,129 @@
+:root {
+  --ink: #15242c;
+  --mist: #e9edef;
+  --paper: #ffffff;
+  --line: #d7dee1;
+  --brass: #a87f1c;
+  --brass-hi: #c9972b;
+  --pine: #1e7a4c;
+  --clay: #b3402e;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--mist);
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+/* Pita atas: satu-satunya area gelap, menampung identitas */
+.band { background: var(--ink); color: #f2f5f6; }
+.band-in {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 22px 20px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34px; line-height: 1.1; margin: 0; letter-spacing: 0.01em;
+}
+.brand p { margin: 2px 0 0; color: #b9c6cb; font-size: 14px; max-width: 46ch; }
+
+.badge {
+  margin: 0; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--brass-hi); color: var(--brass-hi);
+  font-size: 13px; white-space: nowrap;
+}
+.badge.ok { background: var(--brass-hi); border-color: var(--brass-hi); color: var(--ink); }
+
+/* Isi: dua panel dengan peran berbeda */
+.grid {
+  display: grid; grid-template-columns: 340px 1fr;
+  gap: 18px; padding-top: 22px; padding-bottom: 120px;
+}
+.panel {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 20px 20px 22px;
+}
+.panel h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px; margin: 0 0 4px;
+}
+.hint { color: #54666d; font-size: 13.5px; margin: 0 0 12px; }
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ghost {
+  background: transparent; border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 12px; font-size: 13px; color: var(--ink); cursor: pointer;
+}
+.ghost:hover { border-color: var(--ink); }
+
+.bgroup { border-top: 1px solid var(--line); padding: 10px 0 4px; }
+.bgroup > .bhead { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bname { font-weight: 600; }
+.bkind { color: #75868d; font-size: 12.5px; }
+.plist { list-style: none; margin: 0 0 4px; padding: 0 0 0 26px; }
+.plist li { margin: 2px 0; }
+.check { display: flex; align-items: flex-start; gap: 9px; cursor: pointer; padding: 3px 0; }
+.check input { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--brass); flex: none; }
+.check small { display: block; color: #75868d; }
+
+#resultMeta .sum {
+  border-left: 4px solid var(--brass-hi); padding: 8px 12px;
+  background: #f6f3ea; border-radius: 0 8px 8px 0; margin: 0 0 10px; font-size: 13.5px;
+}
+#resultMeta .sum.bad { border-color: var(--clay); background: #f9efec; }
+#resultMeta .files { color: #54666d; font-size: 12.5px; margin: 0 0 10px; overflow-wrap: anywhere; }
+
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; background: #f1f4f5; position: sticky; top: 0; }
+td.url, td.pw { overflow-wrap: anywhere; font-size: 12.5px; }
+
+/* Bilah aksi menempel: status + satu tombol kuningan */
+.actionbar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.96); border-top: 1px solid var(--line);
+}
+.action-in {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding-top: 12px; padding-bottom: 12px;
+}
+#status { margin: 0; font-size: 14px; }
+#status.error { color: var(--clay); }
+#status.good { color: var(--pine); }
+#backupBtn {
+  background: var(--brass-hi); color: var(--ink);
+  border: none; border-radius: 999px; cursor: pointer;
+  font-size: 17px; font-weight: 700; padding: 13px 34px; flex: none;
+}
+#backupBtn:hover { background: var(--brass); }
+#backupBtn:disabled { opacity: 0.6; cursor: wait; }
+
+:focus-visible { outline: 3px solid var(--brass-hi); outline-offset: 2px; }
+
+@media (max-width: 860px) {
+  .grid { grid-template-columns: 1fr; }
+  .band-in { flex-direction: column; align-items: flex-start; }
+  .action-in { flex-direction: column; align-items: stretch; }
+  #backupBtn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel { animation: none; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.panel { animation: rise 0.45s ease-out both; }
+.results { animation-delay: 0.08s; }

@@ -1,0 +1,7 @@
+hasil-backup*/
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+contoh/
